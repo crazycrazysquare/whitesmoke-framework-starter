@@ -34,10 +34,14 @@ final class AuthController
 
         if ($wait > 0) {
             logger()->warning('Login refused while locked', ['ip' => $request->ip()]);
-            $minutes = (int) ceil($wait / 60);
-            session()->flash('error', "Too many login attempts. Try again in {$minutes} minute" . ($minutes === 1 ? '' : 's') . '.');
-            session()->flash('old', ['email' => $email]);
-            return Response::redirect('/login');
+            return $this->locked($wait, $email);
+        }
+
+        // Reserve the attempt before checking the password, so a burst of
+        // simultaneous requests cannot slip past the limit.
+        if ($throttle->hit($userKey, $limits['per_account'], $limits['lock_seconds']) > $limits['per_account']) {
+            logger()->warning('Login refused over the limit', ['ip' => $request->ip()]);
+            return $this->locked($throttle->availableIn($userKey), $email);
         }
 
         $input = validate(['email' => $email, 'password' => $password], [
@@ -49,7 +53,6 @@ final class AuthController
         $valid = password_verify($password, $user['password'] ?? self::DUMMY_HASH) && $user !== null;
 
         if (!$valid) {
-            $throttle->hit($userKey, $limits['per_account'], $limits['lock_seconds']);
             $throttle->hit($ipKey, $limits['per_ip'], $limits['lock_seconds']);
 
             if ($throttle->tooMany($userKey) || $throttle->tooMany($ipKey)) {
@@ -74,6 +77,16 @@ final class AuthController
         logger()->info('Login', ['user_id' => $user['id'], 'ip' => $request->ip()]);
 
         return Response::redirect('/');
+    }
+
+    private function locked(int $seconds, string $email): Response
+    {
+        $minutes = max(1, (int) ceil($seconds / 60));
+
+        session()->flash('error', "Too many login attempts. Try again in {$minutes} minute" . ($minutes === 1 ? '' : 's') . '.');
+        session()->flash('old', ['email' => $email]);
+
+        return Response::redirect('/login');
     }
 
     public function logout(Request $request): Response
