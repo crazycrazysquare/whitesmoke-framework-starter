@@ -3,11 +3,10 @@ declare(strict_types=1);
 
 namespace App\Commands;
 
-use PDO;
-use RuntimeException;
 use Whitesmoke\Console\Command;
 use Whitesmoke\Console\Input;
 use Whitesmoke\Console\Output;
+use Whitesmoke\Database\Migrations\Migrator;
 
 final class SetupCommand implements Command
 {
@@ -18,7 +17,7 @@ final class SetupCommand implements Command
 
     public function description(): string
     {
-        return 'Create the framework tables and an admin user';
+        return 'Run migrations and create an admin user';
     }
 
     public function usage(): string
@@ -28,43 +27,8 @@ final class SetupCommand implements Command
 
     public function handle(Input $input, Output $output): int
     {
-        $driver = db()->getAttribute(PDO::ATTR_DRIVER_NAME);
-
-        $id = match ($driver) {
-            'sqlite' => 'INTEGER PRIMARY KEY AUTOINCREMENT',
-            'mysql'  => 'BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY',
-            'pgsql'  => 'BIGSERIAL PRIMARY KEY',
-            'sqlsrv' => 'BIGINT IDENTITY(1,1) PRIMARY KEY',
-            default  => throw new RuntimeException("Unsupported driver: {$driver}"),
-        };
-
-        $timestamp = $driver === 'sqlsrv'
-            ? 'DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()'
-            : 'TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP';
-
-        $tables = [
-            'users' => "
-                id {$id},
-                name VARCHAR(100) NOT NULL,
-                email VARCHAR(254) NOT NULL UNIQUE,
-                password VARCHAR(255) NOT NULL,
-                created_at {$timestamp}
-            ",
-            'throttle' => "
-                id {$id},
-                throttle_key VARCHAR(100) NOT NULL UNIQUE,
-                attempts INTEGER NOT NULL DEFAULT 0,
-                window_ends BIGINT NOT NULL,
-                locked_until BIGINT NOT NULL DEFAULT 0
-            ",
-        ];
-
-        foreach ($tables as $table => $columns) {
-            db()->exec($driver === 'sqlsrv'
-                ? "IF OBJECT_ID('{$table}', 'U') IS NULL CREATE TABLE {$table} ({$columns})"
-                : "CREATE TABLE IF NOT EXISTS {$table} ({$columns})");
-            $output->line("Table ready: {$table}");
-        }
+        (new Migrator(db(), BASE_PATH . '/database/migrations'))
+            ->migrate(fn (string $line) => $output->line($line));
 
         $email     = strtolower(trim((string) $input->option('email', 'admin@whitesmoke.test')));
         $name      = trim((string) $input->option('name', 'Admin'));

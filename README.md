@@ -6,7 +6,7 @@ Application skeleton for the Whitesmoke Framework. The engine lives in
 ## Install
 
     composer install
-    php smoke setup                                                # tables + admin (random password)
+    php smoke setup                                                # migrations + admin (random password)
     php smoke setup --email=you@example.com --password='YourPass123'
 
 ## Run (development)
