@@ -1,0 +1,31 @@
+{
+    "name": "whitesmoke/framework",
+    "description": "Whitesmoke Framework application skeleton.",
+    "type": "project",
+    "keywords": [
+        "framework",
+        "php",
+        "whitesmoke"
+    ],
+    "require": {
+        "php": ">=8.3",
+        "whitesmoke/core": "^0.2"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../core"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
