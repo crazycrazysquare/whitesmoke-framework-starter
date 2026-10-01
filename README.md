@@ -6,14 +6,14 @@ Application skeleton for the Whitesmoke Framework. The engine lives in
 ## Install
 
     composer install
-    php database/setup.php                     # tables + admin (random password)
-    php database/setup.php you@example.com 'YourPass123'
+    php smoke setup                                                # tables + admin (random password)
+    php smoke setup --email=you@example.com --password='YourPass123'
 
 ## Run (development)
 
-    SESSION_SECURE=false php -S 127.0.0.1:8000 -t public public/index.php
+    php smoke serve
 
-`SESSION_SECURE=false` is only for plain-HTTP local development.
+Run `php smoke list` to see every command.
 
 ## Database
 
