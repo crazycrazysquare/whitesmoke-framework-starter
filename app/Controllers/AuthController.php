@@ -25,6 +25,7 @@ final class AuthController
         $email    = strtolower(trim($request->post('email', '')));
         $password = $request->post('password', '');
 
+        $limits   = (require BASE_PATH . '/config/auth.php')['throttle'];
         $throttle = new Throttle();
         $userKey  = 'login:' . hash('sha256', $email . '|' . $request->ip());
         $ipKey    = 'login-ip:' . hash('sha256', $request->ip());
@@ -32,6 +33,7 @@ final class AuthController
         $wait = max($throttle->availableIn($userKey), $throttle->availableIn($ipKey));
 
         if ($wait > 0) {
+            logger()->warning('Login refused while locked', ['ip' => $request->ip()]);
             $minutes = (int) ceil($wait / 60);
             session()->flash('error', "Too many login attempts. Try again in {$minutes} minute" . ($minutes === 1 ? '' : 's') . '.');
             session()->flash('old', ['email' => $email]);
@@ -47,8 +49,12 @@ final class AuthController
         $valid = password_verify($password, $user['password'] ?? self::DUMMY_HASH) && $user !== null;
 
         if (!$valid) {
-            $throttle->hit($userKey, 5, 900);
-            $throttle->hit($ipKey, 20, 900);
+            $throttle->hit($userKey, $limits['per_account'], $limits['lock_seconds']);
+            $throttle->hit($ipKey, $limits['per_ip'], $limits['lock_seconds']);
+
+            if ($throttle->tooMany($userKey) || $throttle->tooMany($ipKey)) {
+                logger()->warning('Login locked after repeated failures', ['ip' => $request->ip()]);
+            }
 
             session()->flash('error', 'Invalid email or password.');
             session()->flash('old', ['email' => $email]);
@@ -64,6 +70,8 @@ final class AuthController
         session()->regenerate();
         session()->put('user_id', $user['id']);
         session()->put('user_name', $user['name']);
+
+        logger()->info('Login', ['user_id' => $user['id'], 'ip' => $request->ip()]);
 
         return Response::redirect('/');
     }

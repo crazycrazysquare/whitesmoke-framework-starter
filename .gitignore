@@ -3,3 +3,5 @@ composer.lock
 /storage/*.sqlite
 /storage/sessions/*
 !/storage/sessions/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
