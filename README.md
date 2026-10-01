@@ -28,6 +28,6 @@ environment variables, which always win over `.env`): `DB_CONNECTION` (mysql, pg
 
 ## Core during development
 
-`composer.json` points to `../core` as a path repository and requires
+`composer.json` points to `../whitesmoke-core` as a path repository and requires
 `whitesmoke/core: ^0.2@dev`. When the core is tagged on GitHub, drop the `@dev`. When the core
 is on GitHub, replace it with a `vcs` repository or Packagist.
