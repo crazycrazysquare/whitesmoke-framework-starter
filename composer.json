@@ -2,6 +2,7 @@
     "name": "whitesmoke/framework",
     "description": "Whitesmoke Framework application skeleton.",
     "type": "project",
+    "license": "MIT",
     "keywords": [
         "framework",
         "php",
@@ -9,12 +10,12 @@
     ],
     "require": {
         "php": ">=8.3",
-        "whitesmoke/core": "^0.2@dev"
+        "whitesmoke/core": "^0.2"
     },
     "repositories": [
         {
-            "type": "path",
-            "url": "../whitesmoke-core"
+            "type": "vcs",
+            "url": "https://github.com/crazycrazysquare/whitesmoke-framework-core.git"
         }
     ],
     "autoload": {

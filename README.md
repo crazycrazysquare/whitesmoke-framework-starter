@@ -5,8 +5,10 @@ Application skeleton for the Whitesmoke Framework. The engine lives in
 
 ## Install
 
-    composer install
-    cp .env.example .env        # created automatically by composer create-project
+Until the packages are on Packagist, point Composer at this repository:
+
+    composer create-project whitesmoke/framework myapp --repository='{"type":"vcs","url":"https://github.com/crazycrazysquare/whitesmoke-framework-starter.git"}'
+    cd myapp                    # .env is created for you
     php smoke setup                                                # migrations + admin (random password)
     php smoke setup --email=you@example.com --password='YourPass123'
 
@@ -26,8 +28,17 @@ environment variables, which always win over `.env`): `DB_CONNECTION` (mysql, pg
 
     php smoke env:cache         # compile .env once; re-run after every .env change
 
-## Core during development
+## Working on the core
 
-`composer.json` points to `../whitesmoke-core` as a path repository and requires
-`whitesmoke/core: ^0.2@dev`. When the core is tagged on GitHub, drop the `@dev`. When the core
-is on GitHub, replace it with a `vcs` repository or Packagist.
+Composer installs `whitesmoke/core` from GitHub. To work on a local core checkout next to
+this folder (`../whitesmoke-core`) instead, run:
+
+    composer config repositories.local path ../whitesmoke-core
+    composer require "whitesmoke/core:^0.2@dev"
+
+This edits `composer.json`; do not commit it. To go back: `git checkout composer.json`
+and `composer update whitesmoke/core`.
+
+## License
+
+MIT. See `LICENSE`.
