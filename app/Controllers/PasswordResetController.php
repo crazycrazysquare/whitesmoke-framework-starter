@@ -54,16 +54,17 @@ final class PasswordResetController
         } elseif ($user = table('users')->where('email', '=', $email)->first()) {
             $token = (new PasswordResets((int) $limits['lifetime']))->create((int) $user['id']);
             $link  = $base . '/reset-password?token=' . $token;
+            $host  = (string) parse_url($link, PHP_URL_HOST);
             $mail  = new Message($email, 'Reset your password', implode("\n", [
                 'Hello ' . $user['name'] . ',',
                 '',
-                'Someone asked to reset the password for your account at ' . parse_url($link, PHP_URL_HOST) . '.',
+                "Someone asked to reset the password for your account at {$host}.",
                 "To choose a new password, open this link within {$minutes} minutes:",
                 '',
                 $link,
                 '',
                 'If you did not ask for this, ignore this email. Your password stays the same.',
-            ]));
+            ]), view()->render('emails/password_reset', ['name' => $user['name'], 'host' => $host, 'minutes' => $minutes, 'link' => $link]));
 
             // After the response, so a registered address does not answer more slowly.
             register_shutdown_function(static function () use ($mail, $user): void {
