@@ -119,6 +119,7 @@ final class PasswordResetController
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
         (new PasswordResets(self::lifetime()))->clear($userId);
+        AuthController::rememberMe()->clear($userId);   // also revoked by the new password; this removes the rows
 
         session()->regenerate();
         logger()->info('Password reset', ['user_id' => $userId, 'ip' => $request->ip()]);

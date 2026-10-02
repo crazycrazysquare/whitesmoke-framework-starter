@@ -13,6 +13,7 @@
         .ok { background: #dcfce7; } .err { background: #fee2e2; }
         label { display: block; margin: .75rem 0 .25rem; }
         input { padding: .5rem; width: 100%; box-sizing: border-box; }
+        input[type=checkbox] { width: auto; margin-right: .4rem; }
         button { padding: .5rem 1rem; }
         form.login button { margin-top: 1rem; }
         dl { display: grid; grid-template-columns: max-content 1fr; gap: .5rem 1rem; }

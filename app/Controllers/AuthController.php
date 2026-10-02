@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use Whitesmoke\Auth\RememberMe;
 use Whitesmoke\Auth\SessionUser;
 use Whitesmoke\Http\Request;
 use Whitesmoke\Http\Response;
@@ -76,9 +77,19 @@ final class AuthController
         (new SessionUser())->remember($user);
         session()->put('user_name', $user['name']);
 
+        if ($request->post('remember') === '1') {
+            self::rememberMe()->issue($user);
+        }
+
         logger()->info('Login', ['user_id' => $user['id'], 'ip' => $request->ip()]);
 
         return Response::redirect('/');
+    }
+
+    /** "Remember me" with the settings from config/auth.php (also used by the auth middleware). */
+    public static function rememberMe(): RememberMe
+    {
+        return new RememberMe((int) (require BASE_PATH . '/config/auth.php')['remember']['days']);
     }
 
     private function locked(int $seconds, string $email): Response
@@ -93,6 +104,7 @@ final class AuthController
 
     public function logout(Request $request): Response
     {
+        self::rememberMe()->forget($request);
         session()->invalidate();
         session()->flash('success', 'You have been logged out.');
 

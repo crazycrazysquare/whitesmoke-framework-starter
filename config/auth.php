@@ -9,6 +9,12 @@ return [
         'lock_seconds' => 900,  // 15 minutes
     ],
 
+    // "Remember me" on the login form: stay logged in on that device for this many days
+    // (1 to 365). Logging out there, or changing the password, ends it.
+    'remember' => [
+        'days' => 30,
+    ],
+
     // Password reset by email.
     'reset' => [
         'lifetime'     => 3600, // seconds a reset link works (60 to 86400)
