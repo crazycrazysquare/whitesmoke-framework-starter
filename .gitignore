@@ -8,3 +8,5 @@ composer.lock
 !/storage/logs/.gitkeep
 /storage/cache/*
 !/storage/cache/.gitkeep
+/storage/uploads/*
+!/storage/uploads/.gitkeep
