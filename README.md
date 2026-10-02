@@ -22,6 +22,14 @@ SQLite by default (`storage/database.sqlite`). Switch in `.env` (or real
 environment variables, which always win over `.env`): `DB_CONNECTION` (mysql, pgsql, sqlite, sqlsrv), `DB_HOST`,
 `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`.
 
+## Mail and password reset
+
+"Forgot your password?" on the login page emails a reset link. It needs `APP_URL`
+(the site address) and mail settings in `.env`. `MAIL_DRIVER=log` writes emails to
+`storage/logs/mail-*.log` during development. For real sending, set `MAIL_DRIVER=smtp`
+and your provider's `MAIL_HOST`, `MAIL_PORT`, `MAIL_ENCRYPTION`, `MAIL_USERNAME` and
+`MAIL_PASSWORD`.
+
 ## Production
 
     php smoke env:cache         # compile .env once; re-run after every .env change
