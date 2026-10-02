@@ -38,6 +38,8 @@ return [
             'database' => (string) env('DB_DATABASE', ''),
             'username' => (string) env('DB_USERNAME', ''),
             'password' => (string) env('DB_PASSWORD', ''),
+            // Always encrypted; true skips the certificate check (self-signed, local only).
+            'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', false),
         ],
     ],
 ];
