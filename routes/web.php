@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use App\Controllers\AccountController;
 use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
 use App\Controllers\PasswordResetController;
@@ -14,4 +15,6 @@ return [
     'POST /forgot-password' => [PasswordResetController::class, 'sendLink', ['csrf']],
     'GET /reset-password'   => [PasswordResetController::class, 'showReset'],
     'POST /reset-password'  => [PasswordResetController::class, 'reset', ['csrf']],
+    'GET /account/password'  => [AccountController::class, 'showPassword', ['auth']],
+    'POST /account/password' => [AccountController::class, 'changePassword', ['auth', 'csrf']],
 ];

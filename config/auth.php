@@ -15,6 +15,12 @@ return [
         'days' => 30,
     ],
 
+    // Changing the password while logged in: wrong current passwords per user.
+    'change_password' => [
+        'attempts'     => 5,
+        'lock_seconds' => 900,
+    ],
+
     // Password reset by email.
     'reset' => [
         'lifetime'     => 3600, // seconds a reset link works (60 to 86400)

@@ -25,6 +25,7 @@
         <strong>Whitesmoke</strong>
         <?php if ($userName !== null): ?>
             <span><?= e($userName) ?></span>
+            <a href="/account/password">Change password</a>
             <form method="post" action="/logout">
                 <?= csrf_field() ?>
                 <button>Logout</button>
