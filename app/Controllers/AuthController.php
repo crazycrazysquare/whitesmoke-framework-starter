@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use Whitesmoke\Auth\SessionUser;
 use Whitesmoke\Http\Request;
 use Whitesmoke\Http\Response;
 use Whitesmoke\Security\Throttle;
@@ -67,11 +68,12 @@ final class AuthController
         $throttle->clear($userKey);
 
         if (password_needs_rehash($user['password'], PASSWORD_DEFAULT)) {
-            table('users')->where('id', '=', $user['id'])->update(['password' => password_hash($password, PASSWORD_DEFAULT)]);
+            $user['password'] = password_hash($password, PASSWORD_DEFAULT);
+            table('users')->where('id', '=', $user['id'])->update(['password' => $user['password']]);
         }
 
-        session()->regenerate();
-        session()->put('user_id', $user['id']);
+        // New session id, user id and a fingerprint of the current password hash.
+        (new SessionUser())->remember($user);
         session()->put('user_name', $user['name']);
 
         logger()->info('Login', ['user_id' => $user['id'], 'ip' => $request->ip()]);
