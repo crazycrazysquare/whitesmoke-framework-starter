@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": ">=8.3",
-        "whitesmoke/core": "^0.2.9"
+        "whitesmoke/core": "^0.2.12"
     },
     "autoload": {
         "psr-4": {
