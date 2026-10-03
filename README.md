@@ -30,6 +30,15 @@ environment variables, which always win over `.env`): `DB_CONNECTION` (mysql, pg
 and your provider's `MAIL_HOST`, `MAIL_PORT`, `MAIL_ENCRYPTION`, `MAIL_USERNAME` and
 `MAIL_PASSWORD`.
 
+## Tests
+
+    composer test
+
+The tests in `tests/Feature` run the app on PHP's built-in server and use it like a
+browser: login, logout, password reset and change password are covered. Each run
+uses a temporary SQLite database and storage folder and ignores `.env`, so your data
+is never touched. Add your own tests next to them; they extend `Tests\TestCase`.
+
 ## Production
 
     php smoke env:cache         # compile .env once; re-run after every .env change

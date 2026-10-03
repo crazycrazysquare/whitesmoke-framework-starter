@@ -1,6 +1,8 @@
 /vendor/
 /.env
 composer.lock
+/.phpunit.result.cache
+/.phpunit.cache/
 /storage/*.sqlite
 /storage/sessions/*
 !/storage/sessions/.gitkeep
