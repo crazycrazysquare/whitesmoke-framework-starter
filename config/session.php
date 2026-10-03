@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 return [
-    'name'     => 'ws_session',
+    'name'     => 'ws_session',   // the cookie is __Host-ws_session when secure (HTTPS)
     'path'     => storage_path('sessions'),
     'idle'     => 1800,
     'absolute' => 28800,
